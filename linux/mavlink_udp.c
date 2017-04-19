@@ -173,6 +173,9 @@ int main(int argc, char* argv[])
 				{
 					// Packet received
 					printf("\nReceived packet: SYS: %d, COMP: %d, LEN: %d, MSG ID: %d\n", msg.sysid, msg.compid, msg.len, msg.msgid);
+					
+					/* append by zhengyu */
+					copy_data_to_share(&msg);
 				}
 			}
 			printf("\n");
