@@ -133,27 +133,27 @@ int main(int argc, char* argv[])
 	for (;;) 
     {
 		
-		/*Send Heartbeat */
+		/*Send Heartbeat 
 		mavlink_msg_heartbeat_pack(1, 200, &msg, MAV_TYPE_HELICOPTER, MAV_AUTOPILOT_GENERIC, MAV_MODE_GUIDED_ARMED, 0, MAV_STATE_ACTIVE);
 		len = mavlink_msg_to_send_buffer(buf, &msg);
-		bytes_sent = sendto(sock, buf, len, 0, (struct sockaddr*)&gcAddr, sizeof(struct sockaddr_in));
+		bytes_sent = sendto(sock, buf, len, 0, (struct sockaddr*)&gcAddr, sizeof(struct sockaddr_in));*/
 		
-		/* Send Status */
+		/* Send Status 
 		mavlink_msg_sys_status_pack(1, 200, &msg, 0, 0, 0, 500, 11000, -1, -1, 0, 0, 0, 0, 0, 0);
 		len = mavlink_msg_to_send_buffer(buf, &msg);
-		bytes_sent = sendto(sock, buf, len, 0, (struct sockaddr*)&gcAddr, sizeof (struct sockaddr_in));
+		bytes_sent = sendto(sock, buf, len, 0, (struct sockaddr*)&gcAddr, sizeof (struct sockaddr_in));*/
 		
-		/* Send Local Position */
+		/* Send Local Position 
 		mavlink_msg_local_position_ned_pack(1, 200, &msg, microsSinceEpoch(), 
 										position[0], position[1], position[2],
 										position[3], position[4], position[5]);
 		len = mavlink_msg_to_send_buffer(buf, &msg);
-		bytes_sent = sendto(sock, buf, len, 0, (struct sockaddr*)&gcAddr, sizeof(struct sockaddr_in));
+		bytes_sent = sendto(sock, buf, len, 0, (struct sockaddr*)&gcAddr, sizeof(struct sockaddr_in));*/
 		
-		/* Send attitude */
+		/* Send attitude 
 		mavlink_msg_attitude_pack(1, 200, &msg, microsSinceEpoch(), 1.2, 1.7, 3.14, 0.01, 0.02, 0.03);
 		len = mavlink_msg_to_send_buffer(buf, &msg);
-		bytes_sent = sendto(sock, buf, len, 0, (struct sockaddr*)&gcAddr, sizeof(struct sockaddr_in));
+		bytes_sent = sendto(sock, buf, len, 0, (struct sockaddr*)&gcAddr, sizeof(struct sockaddr_in));*/
 		
 		
 		memset(buf, 0, BUFFER_LENGTH);
@@ -169,14 +169,13 @@ int main(int argc, char* argv[])
 			{
 				temp = buf[i];
 				printf("%02x ", (unsigned char)temp);
-				if (mavlink_parse_char(MAVLINK_COMM_0, buf[i], &msg, &status))
+				
+				share_data(buf[i], &msg, &status);
+				/* if (mavlink_parse_char(MAVLINK_COMM_0, buf[i], &msg, &status))
 				{
 					// Packet received
 					printf("\nReceived packet: SYS: %d, COMP: %d, LEN: %d, MSG ID: %d\n", msg.sysid, msg.compid, msg.len, msg.msgid);
-					
-					/* append by zhengyu */
-					copy_data_to_share(&msg);
-				}
+				} */
 			}
 			printf("\n");
 		}
@@ -214,3 +213,4 @@ uint64_t microsSinceEpoch()
 	return micros;
 }
 #endif
+
