@@ -51,7 +51,7 @@
 /* This assumes you have the mavlink headers on your include path
  or in the same folder as this source file */
 #include <mavlink.h>
-
+#include "share_data.h"
 
 #define BUFFER_LENGTH 2041 // minimum buffer size that can be used with qnx (I don't know why)
 
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
 	ssize_t recsize;
 	socklen_t fromlen;
 	int bytes_sent;
-	mavlink_message_t msg;
+	//mavlink_message_t msg;
 	uint16_t len;
 	int i = 0;
 	//int success = 0;
@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
 	memset(&locAddr, 0, sizeof(locAddr));
 	locAddr.sin_family = AF_INET;
 	locAddr.sin_addr.s_addr = INADDR_ANY;
-	locAddr.sin_port = htons(14551);
+	locAddr.sin_port = htons(14550);
 	
 	/* Bind the socket to port 14551 - necessary to receive packets from qgroundcontrol */ 
 	if (-1 == bind(sock,(struct sockaddr *)&locAddr, sizeof(struct sockaddr)))
@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
 	memset(&gcAddr, 0, sizeof(gcAddr));
 	gcAddr.sin_family = AF_INET;
 	gcAddr.sin_addr.s_addr = inet_addr(target_ip);
-	gcAddr.sin_port = htons(14550);
+	gcAddr.sin_port = htons(14551);
 	
 	
 	
@@ -154,8 +154,7 @@ int main(int argc, char* argv[])
 		mavlink_msg_attitude_pack(1, 200, &msg, microsSinceEpoch(), 1.2, 1.7, 3.14, 0.01, 0.02, 0.03);
 		len = mavlink_msg_to_send_buffer(buf, &msg);
 		bytes_sent = sendto(sock, buf, len, 0, (struct sockaddr*)&gcAddr, sizeof(struct sockaddr_in));*/
-		
-		
+
 		memset(buf, 0, BUFFER_LENGTH);
 		recsize = recvfrom(sock, (void *)buf, BUFFER_LENGTH, 0, (struct sockaddr *)&gcAddr, &fromlen);
 		if (recsize > 0)
@@ -164,23 +163,62 @@ int main(int argc, char* argv[])
 			mavlink_message_t msg;
 			mavlink_status_t status;
 			
-			printf("Bytes Received: %d\nDatagram: ", (int)recsize);
+			//printf("Bytes Received: %d\nDatagram: ", (int)recsize);
 			for (i = 0; i < recsize; ++i)
 			{
 				temp = buf[i];
-				printf("%02x ", (unsigned char)temp);
-				
+				//printf("%02X ", (unsigned char)temp);
 				share_data(buf[i], &msg, &status);
-				/* if (mavlink_parse_char(MAVLINK_COMM_0, buf[i], &msg, &status))
-				{
-					// Packet received
-					printf("\nReceived packet: SYS: %d, COMP: %d, LEN: %d, MSG ID: %d\n", msg.sysid, msg.compid, msg.len, msg.msgid);
-				} */
 			}
 			printf("\n");
 		}
+		
+		//printf("2...pitch:%f \r\n roll:%f \r\n yaw:%f \r\n ",			\
+			get_pitch()*deffer,get_roll()*deffer,get_yaw()*deffer);
+		
+		//printf("volatge\t\t%u\n", get_voltage_battery());
+		//printf("current\t\t%d\n", get_current_battery());
+		//printf("battery_re\t%d\n", get_battery_remaining());
+		
+		//uint32_t c_mode = 0;
+		//uint8_t b_mode = 0;
+		//get_flight_mode(&c_mode, &b_mode);
+		//printf("c_mode = %u, b_mode = %u\n", c_mode, b_mode);
+		
+		//printf("scount\t\t%d\n", get_satellites_visible());
+		//printf("roll\t\t%f\n", get_roll());
+		//printf("pitch\t\t%f\n", get_pitch());
+		//printf("yaw\t\t%f\n", get_yaw());
+		//printf("alt\t\t%f\n", get_altitude());
+		
+		//printf("g_speed\t\t%f\n", get_groundspeed());
+		//printf("a_speed\t\t%f\n", get_airspeed());
+		
+		//get_flight_mode();
+		
+		//get_chan_x_raw(uint16_t *channel_x);
+		/*
+		uint16_t channel[8];
+		bzero(channel, sizeof(channel));
+		get_chan_x_raw(channel);
+		int i = 0;
+		for (i = 0; i < 8; i++) {
+			printf("ch%i = %u\n", i + 1, channel[i]);
+		}
+		*/
+		//printf("climb\t\t%f\n", get_climb());
+		
+		char base_mode_buf[64] = {0};
+		char custom_mode_buf[64] = {0};
+		get_flight_mode(base_mode_buf, custom_mode_buf);
+		static int count = 1;
+		printf("%d...base: %s\t\tcustom: %s\n", count, base_mode_buf, custom_mode_buf);
+		count > 4 ? count = 1 : count++;
+		
+		printf("\n");
 		memset(buf, 0, BUFFER_LENGTH);
-		sleep(1); // Sleep one second
+		usleep(250);
+		//sleep(1); // Sleep one second
     }
 }
 
