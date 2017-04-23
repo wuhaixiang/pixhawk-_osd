@@ -29,11 +29,11 @@ void heartbeat_set_timeout(void)
     memset(&timeout, 0, sizeof(timeout));
 
     //Timeout to run first time
-    timeout.it_value.tv_sec = 2;
+    timeout.it_value.tv_sec = 1;
     timeout.it_value.tv_usec = 0;
 
     //After first, the Interval time for clock
-    timeout.it_interval.tv_sec = 2;
+    timeout.it_interval.tv_sec = 1;
     timeout.it_interval.tv_usec = 0;
 
     if(setitimer(ITIMER_REAL, &timeout, NULL) < 0) {
@@ -200,7 +200,7 @@ void get_flight_mode(char *base_mode_buf, char *custom_mode_buf)
 		//printf("apm\n");
 		get_APM_flight_mode(base_mode_buf, custom_mode_buf);
 	}
-	if ((heartbeat.type == 2) && (heartbeat.autopilot == 12)) {
+	if (heartbeat.autopilot == 12) {
 		//printf("PX4\n");
 		get_PX4_flight_mode(base_mode_buf, custom_mode_buf);
 	}
@@ -407,53 +407,43 @@ void get_APM_flight_mode(char *base_mode_buf, char *custom_mode_buf)
 
 void get_PX4_flight_mode(char *base_mode_buf, char *custom_mode_buf)
 {
+	sprintf(base_mode_buf, "%d", heartbeat.base_mode);
 	
-	if (heartbeat.base_mode == 81) {
-		
-		strcpy(base_mode_buf, "81");
-		
-		switch (heartbeat.custom_mode) {
-			case 65536 : {
-				//manual
-				strcpy(custom_mode_buf, "manual");
-				break;
-			}
-			case 458752 : {
-				//stabilized
-				strcpy(custom_mode_buf, "stabilized");
-				break;
-			}
-			default : {
-				strcpy(custom_mode_buf, "unknow");
-				break;
-			}
+	switch (heartbeat.custom_mode) {
+		case 65536 : {
+			//manual
+			strcpy(custom_mode_buf, "manual");
+			break;
+		}
+		case 458752 : {
+			//stabilized
+			strcpy(custom_mode_buf, "stabilized");
+			break;
+		}
+		case 327680 : {
+			//acro
+			strcpy(custom_mode_buf, "acro");
+			break;
+		}
+		case 524288 : {
+			//rattitude
+			strcpy(custom_mode_buf, "rattitude");
+			break;
+		}
+		case 131072 : {
+			//altitude
+			strcpy(custom_mode_buf, "altitude");
+			break;
+		}
+		case 196608 : {
+			//position
+			strcpy(custom_mode_buf, "position");
+			break;
+		}
+		default : {
+			strcpy(custom_mode_buf, "unknow");
+			break;
 		}
 	}
-	else if (heartbeat.base_mode == 65) {
-		
-		strcpy(base_mode_buf, "65");
-		
-		switch (heartbeat.custom_mode) {
-			case 327680 : {
-				//acro
-				strcpy(custom_mode_buf, "acro");
-				break;
-			}
-			case 524288 : {
-				//rattitude
-				strcpy(custom_mode_buf, "rattitude");
-				break;
-			}
-			default : {
-				strcpy(custom_mode_buf, "unknow");
-				break;
-			}
-		}
-	}
-	/* else if */
-	else {
-		strcpy(base_mode_buf, "unknow");
-	}
-	
 	return ;
 }
