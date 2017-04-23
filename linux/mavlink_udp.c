@@ -168,46 +168,40 @@ int main(int argc, char* argv[])
 			{
 				temp = buf[i];
 				//printf("%02X ", (unsigned char)temp);
-				share_data(buf[i], &msg, &status);
+				updata(buf[i], &msg, &status);
 			}
 			printf("\n");
 		}
 		
-		//printf("2...pitch:%f \r\n roll:%f \r\n yaw:%f \r\n ",			\
-			get_pitch()*deffer,get_roll()*deffer,get_yaw()*deffer);
+		printf("volatge\t\t%u\n", get_voltage_battery());
+		printf("battery_re\t%d\n", get_battery_remaining());
+		printf("current\t\t%d\n", get_current_battery());
 		
-		//printf("volatge\t\t%u\n", get_voltage_battery());
-		//printf("current\t\t%d\n", get_current_battery());
-		//printf("battery_re\t%d\n", get_battery_remaining());
+		printf("alt\t\t%f\n", get_altitude());
+		printf("g_speed\t\t%f\n", get_groundspeed());
+		printf("a_speed\t\t%f\n", get_airspeed());
 		
-		//uint32_t c_mode = 0;
-		//uint8_t b_mode = 0;
-		//get_flight_mode(&c_mode, &b_mode);
-		//printf("c_mode = %u, b_mode = %u\n", c_mode, b_mode);
+		//printf("distance\t\t%f\n", get_distance_from_home());
 		
-		//printf("scount\t\t%d\n", get_satellites_visible());
-		//printf("roll\t\t%f\n", get_roll());
-		//printf("pitch\t\t%f\n", get_pitch());
-		//printf("yaw\t\t%f\n", get_yaw());
-		//printf("alt\t\t%f\n", get_altitude());
+		printf("sat_count\t\t%d\n", get_satellites_visible());
 		
-		//printf("g_speed\t\t%f\n", get_groundspeed());
-		//printf("a_speed\t\t%f\n", get_airspeed());
 		
-		//get_flight_mode();
+		//uint16_t channel[8];
+		//bzero(channel, sizeof(channel));
+		//get_chan_x_raw(channel);
+		//int i = 0;
+		//for (i = 0; i < 8; i++) {
+		//	printf("ch%i = %u\n", i + 1, channel[i]);
+		//}
 		
-		//get_chan_x_raw(uint16_t *channel_x);
-		/*
-		uint16_t channel[8];
-		bzero(channel, sizeof(channel));
-		get_chan_x_raw(channel);
-		int i = 0;
-		for (i = 0; i < 8; i++) {
-			printf("ch%i = %u\n", i + 1, channel[i]);
-		}
-		*/
-		//printf("climb\t\t%f\n", get_climb());
+		//printf("rssi\t\t%d\n", get_rssi());
 		
+		printf("climb\t\t%f\n", get_climb());
+		
+		printf("roll\t\t%f\n", get_roll());
+		printf("pitch\t\t%f\n", get_pitch());
+		printf("yaw\t\t%f\n", get_yaw());
+				
 		char base_mode_buf[64] = {0};
 		char custom_mode_buf[64] = {0};
 		get_flight_mode(base_mode_buf, custom_mode_buf);
@@ -217,7 +211,7 @@ int main(int argc, char* argv[])
 		
 		printf("\n");
 		memset(buf, 0, BUFFER_LENGTH);
-		usleep(250);
+		usleep(500);
 		//sleep(1); // Sleep one second
     }
 }

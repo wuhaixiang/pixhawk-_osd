@@ -11,7 +11,7 @@ mavlink_radio_status_t			radio_status;
 mavlink_rc_channels_raw_t		rc_channels_raw;	
 mavlink_local_position_ned_t	local_position_ned;	
 
-void share_data(uint8_t c, mavlink_message_t* msg, mavlink_status_t* status)
+void updata(uint8_t c, mavlink_message_t* msg, mavlink_status_t* status)
 {
 	heartbeat_set_timeout();
 
@@ -136,6 +136,11 @@ float get_airspeed(void)
 	return vfr_hud.airspeed;
 }
 
+float get_climb(void)
+{
+	return vfr_hud.climb;
+}
+
 float get_distance_from_home(void)
 {
 	return sqrt((local_position_ned.x)*(local_position_ned.x)
@@ -166,11 +171,6 @@ uint8_t get_rssi(void)
 	return radio_status.rssi;
 }
 
-float get_climb(void)
-{
-	return vfr_hud.climb;
-}
-
 float get_roll(void)
 {
 	return (attitude.roll * deffer);
@@ -193,14 +193,108 @@ float get_yaw(void)
 void get_flight_mode(char *base_mode_buf, char *custom_mode_buf)
 {
 	if ((heartbeat.type == 1) && (heartbeat.autopilot == 3)) {
+		//printf("arduplane\n");
 		get_ArduPlane_flight_mode(base_mode_buf, custom_mode_buf);
 	}
 	if ((heartbeat.type == 2) && (heartbeat.autopilot == 3)) {
+		//printf("apm\n");
 		get_APM_flight_mode(base_mode_buf, custom_mode_buf);
 	}
-	/* if ((heartbeat.type == 1) && (heartbeat.autopilot == 12)) {
+	if ((heartbeat.type == 2) && (heartbeat.autopilot == 12)) {
+		//printf("PX4\n");
 		get_PX4_flight_mode(base_mode_buf, custom_mode_buf);
-	} */
+	}
+	
+	return ;
+}
+
+void get_ArduPlane_flight_mode(char *base_mode_buf, char *custom_mode_buf)
+{
+	if (heartbeat.base_mode == 81) {
+		
+		strcpy(base_mode_buf, "81");
+		
+		switch (heartbeat.custom_mode) {
+			case 0 : {
+				//manual
+				strcpy(custom_mode_buf, "manual");
+				break;
+			}
+			case 2 : {
+				//stabilized
+				strcpy(custom_mode_buf, "stabilized");
+				break;
+			}
+			case 3 : {
+				//traning
+				strcpy(custom_mode_buf, "traning");
+				break;
+			}
+			case 4 : {
+				//acro
+				strcpy(custom_mode_buf, "acro");
+				break;
+			}
+			case 5 : {
+				//FWB A
+				strcpy(custom_mode_buf, "FWB A");
+				break;
+			}
+			case 6 : {
+				//FWB B
+				strcpy(custom_mode_buf, "FWB B");
+				break;
+			}
+			case 7 : {
+				//cruise
+				strcpy(custom_mode_buf, "cruise");
+				break;
+			}
+			case 8 : {
+				//autotune
+				strcpy(custom_mode_buf, "autotune");
+				break;
+			}
+			default : {
+				strcpy(custom_mode_buf, "unknow");
+				break;
+			}
+		}
+	}
+	else if (heartbeat.base_mode == 89) {
+		
+		strcpy(base_mode_buf, "89");
+		
+		switch (heartbeat.custom_mode) {
+			case 1 : {
+				//circle
+				strcpy(custom_mode_buf, "circle");
+				break;
+			}
+			case 11 : {
+				//RTL
+				strcpy(custom_mode_buf, "RTL");
+				break;
+			}
+			case 12 : {
+				//loiter
+				strcpy(custom_mode_buf, "loiter");
+				break;
+			}
+			case 15 : {
+				//guided
+				strcpy(custom_mode_buf, "guided");
+				break;
+			}
+			default : {
+				strcpy(custom_mode_buf, "unknow");
+				break;
+			}
+		}
+	}
+	else {
+		strcpy(base_mode_buf, "unknow");
+	}
 	
 	return ;
 }
@@ -311,51 +405,43 @@ void get_APM_flight_mode(char *base_mode_buf, char *custom_mode_buf)
 	return ;
 }
 
-void get_ArduPlane_flight_mode(char *base_mode_buf, char *custom_mode_buf)
+void get_PX4_flight_mode(char *base_mode_buf, char *custom_mode_buf)
 {
+	
 	if (heartbeat.base_mode == 81) {
 		
 		strcpy(base_mode_buf, "81");
 		
 		switch (heartbeat.custom_mode) {
-			case 0 : {
+			case 65536 : {
 				//manual
 				strcpy(custom_mode_buf, "manual");
 				break;
 			}
-			case 2 : {
+			case 458752 : {
 				//stabilized
 				strcpy(custom_mode_buf, "stabilized");
 				break;
 			}
-			case 3 : {
-				//traning
-				strcpy(custom_mode_buf, "traning");
+			default : {
+				strcpy(custom_mode_buf, "unknow");
 				break;
 			}
-			case 4 : {
+		}
+	}
+	else if (heartbeat.base_mode == 65) {
+		
+		strcpy(base_mode_buf, "65");
+		
+		switch (heartbeat.custom_mode) {
+			case 327680 : {
 				//acro
 				strcpy(custom_mode_buf, "acro");
 				break;
 			}
-			case 5 : {
-				//FWB A
-				strcpy(custom_mode_buf, "FWB A");
-				break;
-			}
-			case 6 : {
-				//FWB B
-				strcpy(custom_mode_buf, "FWB B");
-				break;
-			}
-			case 7 : {
-				//cruise
-				strcpy(custom_mode_buf, "cruise");
-				break;
-			}
-			case 8 : {
-				//autotune
-				strcpy(custom_mode_buf, "autotune");
+			case 524288 : {
+				//rattitude
+				strcpy(custom_mode_buf, "rattitude");
 				break;
 			}
 			default : {
@@ -364,109 +450,10 @@ void get_ArduPlane_flight_mode(char *base_mode_buf, char *custom_mode_buf)
 			}
 		}
 	}
-	else if (heartbeat.base_mode == 89) {
-		
-		strcpy(base_mode_buf, "89");
-		
-		switch (heartbeat.custom_mode) {
-			case 1 : {
-				//circle
-				strcpy(custom_mode_buf, "circle");
-				break;
-			}
-			case 11 : {
-				//RTL
-				strcpy(custom_mode_buf, "RTL");
-				break;
-			}
-			case 12 : {
-				//loiter
-				strcpy(custom_mode_buf, "loiter");
-				break;
-			}
-			case 15 : {
-				//guided
-				strcpy(custom_mode_buf, "guided");
-				break;
-			}
-			default : {
-				strcpy(custom_mode_buf, "unknow");
-				break;
-			}
-		}
-	}
+	/* else if */
 	else {
 		strcpy(base_mode_buf, "unknow");
 	}
 	
 	return ;
 }
-
-/* void get_PX4_flight_mode(char *base_mode_buf, char *custom_mode_buf)
-{
-	
-	if (heartbeat.base_mode == 81) {
-		
-		strcpy(base_mode_buf, "81");
-		
-		switch (heartbeat.custom_mode) {
-			case 0 : {
-				//manual
-			}
-			case 2 : {
-				//stabilized
-			}
-			case 3 : {
-				//traning
-			}
-			case 4 : {
-				//acro
-			}
-			case 5 : {
-				//FWB A
-			}
-			case 6 : {
-				//FWB B
-			}
-			case 7 : {
-				//cruise
-			}
-			case 8 : {
-				//autotune
-			}
-			default : {
-				strcpy(custom_mode_buf, "unknow");
-				break;
-			}
-		}
-	}
-	else if (heartbeat.base_mode == 89) {
-		
-		strcpy(base_mode_buf, "89");
-		
-		switch (heartbeat.custom_mode) {
-			case 1 : {
-				//circle
-			}
-			case 11 : {
-				//RTL
-			}
-			case 12 : {
-				//loiter
-			}
-			case 15 : {
-				//guided
-			}
-			default : {
-				strcpy(custom_mode_buf, "unknow");
-				break;
-			}
-		}
-	}
-	else {
-		strcpy(base_mode_buf, "unknow");
-	}
-	
-	return ;
-} */
-
