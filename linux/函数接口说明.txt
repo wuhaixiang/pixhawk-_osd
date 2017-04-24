@@ -1,0 +1,51 @@
+1. 串口数据处理函数
+	void updata(uint8_t c, mavlink_message_t* msg, mavlink_status_t* status);
+		c ：串口接收到的数据，1Byte
+
+2. 获取电池电压，单位为毫伏(mv)
+	uint16_t get_voltage_battery(void);
+
+3. 获取电池电压剩余百分比
+	int8_t get_battery_remaining(void);
+
+4. 获取当前电流
+	int16_t get_current_battery(void);
+
+5. 获取当前绝对高度
+	float get_altitude(void);
+
+6. 获取地速
+	float get_groundspeed(void);
+
+7. 获取空速
+	float get_airspeed(void);
+
+8. 获取下降/爬升速率
+	float get_climb(void);
+
+9. 获取离家距离
+	float get_distance_from_home(void);
+
+10. 获取当前可见卫星数量
+	uint8_t get_satellites_visible(void);
+
+11. 获取遥控器各个通道输入值
+	void get_chan_x_raw(uint16_t *channel_x);
+		channel_x : 遥控器通道输入值数组，数组长度为 8
+
+12. 获得电台信号强度
+	uint8_t get_rssi(void);
+
+13. 获取横滚
+	float get_roll(void);
+
+14. 获取俯仰
+	float get_pitch(void);
+
+15. 获取偏航
+	float get_yaw(void);
+
+16. 获取飞行模式
+	void get_flight_mode(char *base_mode_buf, char *custom_mode_buf);
+		base_mode_buf	: 存放基本模式值的字符串数组，建议长度不小于8字节
+		custom_mode_buf	: 存放用户模式值得字符串数组，建议长度不小于16字节

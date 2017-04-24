@@ -211,8 +211,8 @@ int main(int argc, char* argv[])
 
 		printf("\n");
 		memset(buf, 0, BUFFER_LENGTH);
-		usleep(500);
-		//sleep(1); // Sleep one second
+		//usleep(500);
+		sleep(1); // Sleep one second
     }
 }
 

@@ -24,8 +24,7 @@ void updata(uint8_t c, mavlink_message_t* msg, mavlink_status_t* status)
 
 void heartbeat_set_timeout(void)
 {
-
-    signal(SIGALRM, heartbeat_timeout);
+	signal(SIGALRM, heartbeat_timeout);
     memset(&timeout, 0, sizeof(timeout));
 
     //Timeout to run first time
