@@ -439,6 +439,26 @@ void get_PX4_flight_mode(char *base_mode_buf, char *custom_mode_buf)
 			strcpy(custom_mode_buf, "position");
 			break;
 		}
+		case 117702656 : {
+			//hold
+			strcpy(custom_mode_buf, "hold");
+			break;
+		}
+		case 67371008 : {
+			//mission
+			strcpy(custom_mode_buf, "mission");
+			break;
+		}
+		case 84148224 : {
+			//return
+			strcpy(custom_mode_buf, "return");
+			break;
+		}
+		case 134479872 : {
+			//followme
+			strcpy(custom_mode_buf, "followme");
+			break;
+		}
 		default : {
 			strcpy(custom_mode_buf, "unknow");
 			break;
