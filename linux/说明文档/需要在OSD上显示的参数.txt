@@ -1,0 +1,17 @@
+	参数			英文名						函数
+	
+1	电压			voltage_battery				uint16_t get_voltage_battery(void);
+2	剩余电量		battery_remaining			int8_t get_battery_remaining(void);
+3	电流			current_battery				int16_t get_current_battery(void);
+4	高度			altitude					float get_altitude(void);
+5	地速			groundspeed					float get_groundspeed(void);
+6	空速			airspeed					float get_airspeed(void);
+7	下降/爬升率率	climb						float get_climb(void);
+8	离家距离		distance_from_home			float get_distance_from_home(void);
+9	卫星数量		satcount					uint8_t get_satellites_visible(void);
+10	遥控信号		remrssi						void get_chan_x_raw(uint16_t *channel_x);
+11	电台信号质量	rssi						uint8_t get_rssi(void);
+12	横滚			Roll						float get_roll(void);
+13	俯仰			Pitch						float get_pitch(void);
+14	偏航			Yaw							float get_yaw(void);
+15	飞行模式		flight_mode					void get_flight_mode(char *base_mode_buf, char *custom_mode_buf);

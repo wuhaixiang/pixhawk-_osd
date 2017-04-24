@@ -168,46 +168,55 @@ int main(int argc, char* argv[])
 			{
 				temp = buf[i];
 				//printf("%02X ", (unsigned char)temp);
+				
+				/*
+				In this example, the argument "buf[i]" is the char that socket received,
+				in development, this argument sould be serial read char.
+				*/
 				updata(buf[i], &msg, &status);
 			}
 			printf("\n");
 		}
 
+		/*******************  test function *********************/
+		
+		/* 
 		printf("volatge\t\t%u\n", get_voltage_battery());
 		printf("battery_re\t%d\n", get_battery_remaining());
 		printf("current\t\t%d\n", get_current_battery());
-
 		printf("alt\t\t%f\n", get_altitude());
 		printf("g_speed\t\t%f\n", get_groundspeed());
 		printf("a_speed\t\t%f\n", get_airspeed());
-
-		//printf("distance\t\t%f\n", get_distance_from_home());
-
+		printf("distance\t\t%f\n", get_distance_from_home());
 		printf("sat_count\t\t%d\n", get_satellites_visible());
+		*/
 
+		/*
+		uint16_t channel[8];
+		bzero(channel, sizeof(channel));
+		get_chan_x_raw(channel);
+		int i = 0;
+		for (i = 0; i < 8; i++) {
+			printf("ch%i = %u\n", i + 1, channel[i]);
+		}
+		*/
 
-		//uint16_t channel[8];
-		//bzero(channel, sizeof(channel));
-		//get_chan_x_raw(channel);
-		//int i = 0;
-		//for (i = 0; i < 8; i++) {
-		//	printf("ch%i = %u\n", i + 1, channel[i]);
-		//}
-
-		//printf("rssi\t\t%d\n", get_rssi());
-
+		/*
+		printf("rssi\t\t%d\n", get_rssi());
 		printf("climb\t\t%f\n", get_climb());
-
 		printf("roll\t\t%f\n", get_roll());
 		printf("pitch\t\t%f\n", get_pitch());
 		printf("yaw\t\t%f\n", get_yaw());
+		*/
 
+		/*
 		char base_mode_buf[64] = {0};
 		char custom_mode_buf[64] = {0};
 		get_flight_mode(base_mode_buf, custom_mode_buf);
 		static int count = 1;
 		printf("%d...base: %s\t\tcustom: %s\n", count, base_mode_buf, custom_mode_buf);
 		count > 4 ? count = 1 : count++;
+		*/
 
 		printf("\n");
 		memset(buf, 0, BUFFER_LENGTH);
